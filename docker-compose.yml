@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # MongoDB Service for persistent data storage
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017" # Maps the container's port 27017 to the host's port 27017
+    volumes:
+      - mongodata:/data/db # Persists MongoDB data in a named volume
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    networks:
+      - devlivery-net
+
+  # Redis Service for caching and session storage (e.g., shopping carts)
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379" # Maps the container's port 6379 to the host's port 6379
+    volumes:
+      - redisdata:/data # Persists Redis data in a named volume
+    networks:
+      - devlivery-net
+
+# Named volumes for data persistence
+# This ensures that your data is not lost when you stop or remove the containers.
+volumes:
+  mongodata:
+  redisdata:
+
+# Custom network for inter-service communication
+# This allows services to communicate with each other using their service names as hostnames.
+networks:
+  devlivery-net:
+    driver: bridge
